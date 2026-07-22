@@ -93,7 +93,7 @@ class RankSelect(discord.ui.Select):
         ]
 
         super().__init__(
-            placeholder="[ 🔒 กดเลือกกลุ่มที่คุณซื้อเอาไว้ ]",
+            placeholder="[ 🔒 เลือกกลุ่มที่คุณซื้อเอาไว้ ]",
             min_values=1,
             max_values=1,
             options=options
@@ -177,7 +177,7 @@ class RankSelect(discord.ui.Select):
         embed.set_image(url=qr)
 
         embed.set_footer(
-            text="สแกน QR หรือกดปุ่มด้านล่างนี้เพิ่มเข้าทางลิ้งก์"
+            text="สแกน QR หรือกดปุ่มด้านล่างนี้เพิ่อเข้าทางลิ้งก์ตรง"
         )
 
         await interaction.response.send_message(
