@@ -19,9 +19,9 @@ QR_2 = "https://i.postimg.cc/FFZ77F99/DH-Onlyfans.jpg" # Onlyfans
 QR_3 = "https://i.postimg.cc/521H0HzL/DH-Hanime.jpg" # H/ANIME
 # ===== TELEGRAM LINKS =====
 LINK_1 = "https://t.me/+ppsrtnXsBAI4ODU1" # นานาชาติ
-LINK_2 = "https://t.me/+tHRrGXsDfk01YTJl" # Onlyfans
-LINK_3 = "https://t.me/+3QMIoq8e5zg1Zjll" # H/ANIME
-
+LINK_2 = "https://t.me/+3QMIoq8e5zg1Zjll" # Onlyfans
+LINK_3 = "https://t.me/+tHRrGXsDfk01YTJl" # H/ANIME
+# ===== INTENTS =====
 intents = discord.Intents.default()
 intents.guilds = True
 intents.members = True
@@ -78,11 +78,22 @@ class RankSelect(discord.ui.Select):
                     id=1472134208993497202,
                     animated=True
                 )
+            ),
+
+            discord.SelectOption(
+                label="[ ล้างตัวเลือกใหม่ ]",
+                description="ล้างเพื่อเลือกเมนูใหม่",
+                value="reset",
+                emoji=discord.PartialEmoji(
+                    name="loading_2",
+                    id=1472227753750167757,
+                    animated=True
+                )
             )
         ]
 
         super().__init__(
-            placeholder="[ 🔒 เลือกกลุ่มที่คุณซื้อเอาไว้ ]",
+            placeholder="[ 🔒 กดเลือกกลุ่มที่คุณซื้อเอาไว้ ]",
             min_values=1,
             max_values=1,
             options=options
@@ -96,6 +107,12 @@ class RankSelect(discord.ui.Select):
         role_ids = [role.id for role in interaction.user.roles]
 
         selected = self.values[0]
+
+        if selected == "reset":
+            await interaction.response.edit_message(
+                view=RankView()
+            )
+            return
 
         if ROLE_ALL in role_ids:
             allowed = True
@@ -119,7 +136,7 @@ class RankSelect(discord.ui.Select):
                 description=(
                     "```"
                     "กรุณาซื้อยศที่ตรงกับเมนูนี้ก่อนใช้งาน\n"
-                    "หากคิดว่าเกิดข้อผิดพลาด กรุณาติดต่อแอดมิน"
+                    "หากคิดว่าเกิดข้อผิดพลาด กรุณาติดต่อแอดมิน!"
                     "```"
                 ),
                 color=0xFF0000
@@ -134,17 +151,17 @@ class RankSelect(discord.ui.Select):
         # ===== เลือก QR และลิงก์ =====
 
         if selected == "rank1":
-            group_name = "🔞﹒𝐕𝐈𝐏・นานาชาติ"
+            group_name = "กลุ่ม﹒𝐕𝐈𝐏・นานาชาติ & หมวดหมู่ตลิป"
             qr = QR_1
             link = LINK_1
 
         elif selected == "rank2":
-            group_name = "🔵﹒𝐕𝐈𝐏・𝑶𝒏𝒍𝒚𝒇𝒂𝒏𝒔/AccLock"
+            group_name = "กลุ่ม﹒𝐕𝐈𝐏・𝑶𝒏𝒍𝒚𝒇𝒂𝒏𝒔/AccLock"
             qr = QR_2
             link = LINK_2
 
         else:
-            group_name = "🎀﹒𝐕𝐈𝐏・H/ANIME & 3D"
+            group_name = "กลุ่ม﹒𝐕𝐈𝐏・H/ANIME & 3D"
             qr = QR_3
             link = LINK_3
 
@@ -152,7 +169,7 @@ class RankSelect(discord.ui.Select):
             title=f"📌 {group_name}",
             description=(
                 f"{interaction.user.mention}\n\n"
-                "> ⏳ เลือกกลุ่มที่ซื้อไว้แล้วรอการอนุมัติ"
+                "> ⏳ Scan QR หรือกดลิ้งก์เพื่อเข้าร่วมกลุ่มที่ซื้อไว้แล้วรอการอนุมัติ"
             ),
             color=0x87CEFA
         )
@@ -160,7 +177,7 @@ class RankSelect(discord.ui.Select):
         embed.set_image(url=qr)
 
         embed.set_footer(
-            text="สแกน QR หรือกดปุ่มด้านล่าง"
+            text="สแกน QR หรือกดปุ่มด้านล่างนี้เพิ่มเข้าทางลิ้งก์"
         )
 
         await interaction.response.send_message(
