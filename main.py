@@ -11,8 +11,8 @@ ROLE_2 = 1082667309254054008  # Onlyfans
 ROLE_3 = 1082667313163157515  # H/ANIME
 ROLE_ALL = 1082885961953853540  # เห็นทุกห้อง
 
-OWNER_ROLE = 1049290191778623549
-DEVELOPER_ROLE = 1474002697077264424
+OWNER_ROLE = 1049290191778623549 # เจ้าของดิส
+DEVELOPER_ROLE = 1474002697077264424 #ผู้พัฒนาร่วม
 # ===== QR CODE =====
 QR_1 = "https://i.postimg.cc/kXT6hJzP/DH-nana-chat.jpg" # นานาชาติ
 QR_2 = "https://i.postimg.cc/FFZ77F99/DH-Onlyfans.jpg" # Onlyfans
