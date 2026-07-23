@@ -78,17 +78,6 @@ class RankSelect(discord.ui.Select):
                     id=1472134208993497202,
                     animated=True
                 )
-            ),
-
-            discord.SelectOption(
-                label="[ ล้างตัวเลือกใหม่ ]",
-                description="ล้างเพื่อเลือกเมนูใหม่",
-                value="reset",
-                emoji=discord.PartialEmoji(
-                    name="loading_2",
-                    id=1472227753750167757,
-                    animated=True
-                )
             )
         ]
 
@@ -107,12 +96,6 @@ class RankSelect(discord.ui.Select):
         role_ids = [role.id for role in interaction.user.roles]
 
         selected = self.values[0]
-
-        if selected == "reset":
-            await interaction.response.edit_message(
-                view=RankView()
-            )
-            return
 
         if ROLE_ALL in role_ids:
             allowed = True
