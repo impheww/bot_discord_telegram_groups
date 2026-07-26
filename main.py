@@ -2,6 +2,9 @@ import discord
 import os
 from discord.ext import commands
 from myserver import server_on
+import logging
+
+logging.basicConfig(level=logging.INFO)
 # ================= TOKEN =================
 # Token อยู่ใน render
 # ================= ID CHANNEL =================
@@ -11,8 +14,8 @@ ROLE_2 = 1082667309254054008  # Onlyfans
 ROLE_3 = 1082667313163157515  # H/ANIME
 ROLE_ALL = 1082885961953853540  # เห็นทุกห้อง
 
-OWNER_ROLE = 1049290191778623549 # เจ้าของดิส
-DEVELOPER_ROLE = 1474002697077264424 #ผู้พัฒนาร่วม
+OWNER_ROLE = 1049290191778623549
+DEVELOPER_ROLE = 1474002697077264424
 # ===== QR CODE =====
 QR_1 = "https://i.postimg.cc/kXT6hJzP/DH-nana-chat.jpg" # นานาชาติ
 QR_2 = "https://i.postimg.cc/FFZ77F99/DH-Onlyfans.jpg" # Onlyfans
@@ -78,6 +81,17 @@ class RankSelect(discord.ui.Select):
                     id=1472134208993497202,
                     animated=True
                 )
+            ),
+
+            discord.SelectOption(
+                label="[ ล้างตัวเลือกใหม่ ]",
+                description="ล้างเพื่อเลือกเมนูใหม่",
+                value="reset",
+                emoji=discord.PartialEmoji(
+                    name="loading_2",
+                    id=1472227753750167757,
+                    animated=True
+                )
             )
         ]
 
@@ -96,6 +110,12 @@ class RankSelect(discord.ui.Select):
         role_ids = [role.id for role in interaction.user.roles]
 
         selected = self.values[0]
+
+        if selected == "reset":
+            await interaction.response.edit_message(
+                view=RankView()
+            )
+            return
 
         if ROLE_ALL in role_ids:
             allowed = True
@@ -119,7 +139,7 @@ class RankSelect(discord.ui.Select):
                 description=(
                     "```"
                     "กรุณาซื้อยศที่ตรงกับเมนูนี้ก่อนใช้งาน\n"
-                    "หากคิดว่าเกิดข้อผิดพลาด กรุณาติดต่อแอดมิน!"
+                    "หากคิดว่าเกิดข้อผิดพลาด กรุณาติดต่อแอดมิน"
                     "```"
                 ),
                 color=0xFF0000
@@ -160,7 +180,7 @@ class RankSelect(discord.ui.Select):
         embed.set_image(url=qr)
 
         embed.set_footer(
-            text="สแกน QR หรือกดปุ่มด้านล่างนี้เพิ่อเข้าทางลิ้งก์ตรง"
+            text="สแกน QR หรือกดปุ่มด้านล่างนี้เพิ่มเข้าทางลิ้งก์"
         )
 
         await interaction.response.send_message(
@@ -176,7 +196,28 @@ class RankView(discord.ui.View):
 
 @bot.event
 async def on_ready():
-    print(f"✅ Logged in as {bot.user}")
+    bot.add_view(RankView())
+    print(f"Logged in as {bot.user}")
+
+@bot.event
+async def on_disconnect():
+    print("❌ Discord Disconnected")
+
+@bot.event
+async def on_resumed():
+    print("✅ Discord Resumed")
+
+@bot.event
+async def on_connect():
+    print("🟢 Discord Connected")
+
+@bot.event
+async def on_error(event, *args, **kwargs):
+    print("Error:", event)
+
+@bot.event
+async def on_command_error(ctx, error):
+    print(error)
 
 @bot.command()
 async def panel(ctx):
@@ -205,6 +246,8 @@ async def panel(ctx):
 
 # ================= RUN =================
 
+print("Starting Flask...")
 server_on()
 
+print("Starting Discord...")
 bot.run(os.getenv('TOKEN'))
