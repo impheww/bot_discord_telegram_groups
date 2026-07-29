@@ -3,6 +3,7 @@ import os
 from discord.ext import commands
 from myserver import server_on
 import logging
+import asyncio
 
 logging.basicConfig(level=logging.INFO)
 # ================= TOKEN =================
@@ -163,7 +164,7 @@ class RankSelect(discord.ui.Select):
         embed.set_image(url=qr)
 
         embed.set_footer(
-            text="สแกน QR หรือกดปุ่มด้านล่างนี้เพิ่มเข้าทางลิ้งก์"
+            text="สแกน QR หรือกดปุ่มด้านล่างนี้เพิ่อเข้าทางลิ้งก์"
         )
 
         await interaction.response.send_message(
@@ -177,10 +178,16 @@ class RankView(discord.ui.View):
         super().__init__(timeout=None)
         self.add_item(RankSelect())
 
+async def heartbeat():
+    while True:
+        print("Bot still running")
+        await asyncio.sleep(60)
+
 @bot.event
 async def on_ready():
     bot.add_view(RankView())
     print(f"Logged in as {bot.user}")
+    bot.loop.create_task(heartbeat())
 
 @bot.event
 async def on_disconnect():
