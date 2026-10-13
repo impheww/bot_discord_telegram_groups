@@ -238,7 +238,7 @@ async def panel(interaction: discord.Interaction):
     embed = discord.Embed(
         title="<:telegramlogo:1521463301559816212> เข้าร่วมกลุ่ม 𝐓𝐄𝐋𝐄𝐆𝐑𝐀𝐌 ได้เลย!",
         description=(
-            "> ** กดเลือกกลุ่มที่คุณซื้อไว้ด้านล่าง **\n"
+            "> ** กดเลือกกลุ่มที่คุณซื้อไว้ด้านล่าง 👇 **\n"
             "*<:qrcode:1521467628495962172> ระบบจะแสดง QR และลิงก์ของกลุ่มที่ตรงกับยศของคุณ*"
         ),
         color=0x87CEFA
