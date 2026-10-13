@@ -29,7 +29,7 @@ LINK_3 = "https://t.me/+tHRrGXsDfk01YTJl" # H/ANIME
 intents = discord.Intents.default()
 intents.guilds = True
 intents.members = True
-intents.message_content = True
+intents.message_content = False
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
@@ -183,11 +183,19 @@ async def heartbeat():
         print("Bot still running")
         await asyncio.sleep(60)
 
+_initialized = False
+
 @bot.event
 async def on_ready():
-    bot.add_view(RankView())
+    global _initialized
+
+    if not _initialized:
+        bot.add_view(RankView())
+        await bot.tree.sync()
+        asyncio.create_task(heartbeat())
+        _initialized = True
+
     print(f"Logged in as {bot.user}")
-    bot.loop.create_task(heartbeat())
 
 @bot.event
 async def on_disconnect():
@@ -201,25 +209,32 @@ async def on_resumed():
 async def on_connect():
     print("🟢 Discord Connected")
 
-@bot.event
-async def on_error(event, *args, **kwargs):
-    print("Error:", event)
+@bot.tree.command(name="panel", description="เปิดแผงตัวเลือก")
+async def panel(interaction: discord.Interaction):
 
-@bot.event
-async def on_command_error(ctx, error):
-    print(error)
-
-@bot.command()
-async def panel(ctx):
-
-    role_ids = [role.id for role in ctx.author.roles]
+    role_ids = [
+        role.id
+        for role in interaction.user.roles
+    ] if isinstance(interaction.user, discord.Member) else []
 
     if (
         OWNER_ROLE not in role_ids
         and DEVELOPER_ROLE not in role_ids
     ):
+        await interaction.response.send_message(
+            "❌ คุณไม่มีสิทธิ์ใช้คำสั่งนี้",
+            ephemeral=True
+        )
         return
 
+    
+    # ตอบยืนยันเฉพาะคนที่ใช้คำสั่ง
+    await interaction.response.send_message(
+        "✅ เปิดแผงตัวเลือกสำเร็จแล้ว",
+        ephemeral=True
+    )
+
+    # สร้าง Embed สำหรับแสดงในห้องแชต
     embed = discord.Embed(
         title="<:telegramlogo:1521463301559816212> เข้าร่วมกลุ่ม 𝐓𝐄𝐋𝐄𝐆𝐑𝐀𝐌 ได้เลย!",
         description=(
@@ -229,11 +244,11 @@ async def panel(ctx):
         color=0x87CEFA
     )
 
-    await ctx.send(
+    # ส่งเป็นข้อความใหม่ในห้องแชต
+    await interaction.followup.send(
         embed=embed,
         view=RankView()
     )
-
 # ================= RUN =================
 
 print("Starting Flask...")
