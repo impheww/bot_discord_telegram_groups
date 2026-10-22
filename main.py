@@ -31,9 +31,6 @@ intents.guilds = True
 intents.members = True
 intents.message_content = False
 
-bot = commands.Bot(command_prefix="!", intents=intents)
-
-
 class LinkButton(discord.ui.View):
     def __init__(self, link):
         super().__init__()
@@ -89,7 +86,8 @@ class RankSelect(discord.ui.Select):
             placeholder="[ 🔒 เลือกกลุ่มที่คุณซื้อเอาไว้ ]",
             min_values=1,
             max_values=1,
-            options=options
+            options=options,
+            custom_id="rankview:rank_select"
         )
 
     async def callback(self, interaction: discord.Interaction):
@@ -183,27 +181,39 @@ async def heartbeat():
         print("Bot still running")
         await asyncio.sleep(60)
 
-_initialized = False
+class MyBot(commands.Bot):
+    async def setup_hook(self):
+        # ลงทะเบียน Select Menu สำหรับข้อความเก่า
+        self.add_view(RankView())
+
+        # ซิงก์ Slash Commands
+        synced = await self.tree.sync()
+        print(f"✅ Synced {len(synced)} slash commands")
+
+        # เริ่ม heartbeat เพียงครั้งเดียว
+        asyncio.create_task(heartbeat())
+
+
+bot = MyBot(
+    command_prefix="!",
+    intents=intents
+)
+
 
 @bot.event
 async def on_ready():
-    global _initialized
+    print(f"✅ Logged in as {bot.user} (ID: {bot.user.id})")
 
-    if not _initialized:
-        bot.add_view(RankView())
-        await bot.tree.sync()
-        asyncio.create_task(heartbeat())
-        _initialized = True
-
-    print(f"Logged in as {bot.user}")
 
 @bot.event
 async def on_disconnect():
     print("❌ Discord Disconnected")
 
+
 @bot.event
 async def on_resumed():
     print("✅ Discord Resumed")
+
 
 @bot.event
 async def on_connect():
@@ -227,7 +237,7 @@ async def panel(interaction: discord.Interaction):
         )
         return
 
-    
+
     # ตอบยืนยันเฉพาะคนที่ใช้คำสั่ง
     await interaction.response.send_message(
         "✅ เปิดแผงตัวเลือกสำเร็จแล้ว",
@@ -238,7 +248,7 @@ async def panel(interaction: discord.Interaction):
     embed = discord.Embed(
         title="<:telegramlogo:1521463301559816212> เข้าร่วมกลุ่ม 𝐓𝐄𝐋𝐄𝐆𝐑𝐀𝐌 ได้เลย!",
         description=(
-            "> ** กดเลือกกลุ่มที่คุณซื้อไว้ด้านล่าง 👇 **\n"
+            "> ** กดเลือกกลุ่มที่คุณซื้อไว้ด้านล่าง 👇**\n"
             "*<:qrcode:1521467628495962172> ระบบจะแสดง QR และลิงก์ของกลุ่มที่ตรงกับยศของคุณ*"
         ),
         color=0x87CEFA
